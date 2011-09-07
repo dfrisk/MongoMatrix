@@ -16,7 +16,7 @@ import javax.swing.JTextField;
  *
  * @author daniel.frisk@mojang.com
  */
-public class ConnectionDialog extends JDialog implements ActionListener {
+class ConnectionDialog extends JDialog implements ActionListener {
 
     private static final String SERVER_PREF = "mongomatrix/server", PORT_PREF = "mongomatrix/port";
     private JTextField serverField, portField;
@@ -24,7 +24,7 @@ public class ConnectionDialog extends JDialog implements ActionListener {
     private int port = 27017;
     private ApplicationWindow app;
 
-    public ConnectionDialog(ApplicationWindow app) {
+    ConnectionDialog(ApplicationWindow app) {
         super(app, "Connect", true);
         this.app = app;
         this.server = Preferences.userRoot().get(SERVER_PREF, server);

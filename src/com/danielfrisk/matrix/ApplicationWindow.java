@@ -15,7 +15,7 @@ import javax.swing.JSplitPane;
  * 
  * @author daniel.frisk@mojang.com
  */
-public class ApplicationWindow extends JFrame {
+class ApplicationWindow extends JFrame {
 
     private Mongo mongo;
     private DB db;
@@ -44,7 +44,7 @@ public class ApplicationWindow extends JFrame {
         showConnectDialog();
     }
 
-    public static void create() {
+    static void create() {
         new ApplicationWindow().setVisible(true);
     }
 
@@ -69,39 +69,27 @@ public class ApplicationWindow extends JFrame {
         }
     }
 
-    public String getSelectedCollection() {
+    String getSelectedCollection() {
         return selectedCollection;
     }
 
-    public void setSelectedCollection(String selectedCollection) {
+    void setSelectedCollection(String selectedCollection) {
         this.selectedCollection = selectedCollection;
     }
 
-    /**
-     * @return the mongo
-     */
-    public Mongo getMongo() {
+    Mongo getMongo() {
         return mongo;
     }
 
-    /**
-     * @param mongo the mongo to set
-     */
-    public void setMongo(Mongo mongo) {
+    void setMongo(Mongo mongo) {
         this.mongo = mongo;
     }
 
-    /**
-     * @return the db
-     */
-    public DB getDb() {
+    DB getDb() {
         return db;
     }
 
-    /**
-     * @param db the db to set
-     */
-    public void setDb(DB db) {
+    void setDb(DB db) {
         this.db = db;
     }
 }
