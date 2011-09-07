@@ -2,17 +2,31 @@ package com.danielfrisk.matrix.os;
 
 import javax.swing.JOptionPane;
 import com.apple.mrj.MRJAboutHandler;
-import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJQuitHandler;
+import java.lang.reflect.Method;
 
+/**
+ * This class is a hack to get some native Mac app support.
+ * 
+ * @author daniel.frisk@mojang.com
+ */
 public class MacHandler implements MRJAboutHandler, MRJQuitHandler {
 
     public static void register() {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MongoMatrix");
         MacHandler handler = new MacHandler();
-        MRJApplicationUtils.registerAboutHandler(handler);
-        MRJApplicationUtils.registerQuitHandler(handler);
+        try {
+            Class<?> macAppUtilsClass = MacHandler.class.getClassLoader().loadClass("com.apple.mrj.MRJApplicationUtils");
+            for(Method m : macAppUtilsClass.getMethods()) {
+                String mn = m.getName();
+                if(mn.equals("registerAboutHandler") || mn.equals("registerQuitHandler")) {
+                    m.invoke(null, handler);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Detected Mac with non MRJ Java. Native support won't work.");
+        }
     }
 
     @Override

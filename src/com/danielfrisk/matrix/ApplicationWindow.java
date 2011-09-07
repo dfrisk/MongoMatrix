@@ -5,7 +5,6 @@ import com.mongodb.DB;
 import com.mongodb.Mongo;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.net.UnknownHostException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
@@ -16,11 +15,10 @@ import javax.swing.JSplitPane;
  * 
  * @author daniel.frisk@mojang.com
  */
-public class ApplicationWindow  extends JFrame {
+public class ApplicationWindow extends JFrame {
 
     private Mongo mongo;
     private DB db;
-    
     private String selectedCollection;
     private SideBar bar;
     private CollectionView view;
@@ -38,6 +36,12 @@ public class ApplicationWindow  extends JFrame {
                 view = new CollectionView(this));
         sp.setDividerLocation(240);
         add(sp);
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        showConnectDialog();
     }
 
     public static void create() {
@@ -60,8 +64,8 @@ public class ApplicationWindow  extends JFrame {
             this.setMongo(new Mongo(server, port));
             bar.refresh();
             view.refresh();
-        } catch (UnknownHostException e) {
-            JOptionPane.showMessageDialog(this, e.toString(), "Connect failed", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getCause() != null ? e.getCause().getMessage() : e.getMessage(), "Connect failed", JOptionPane.ERROR_MESSAGE);
         }
     }
 
