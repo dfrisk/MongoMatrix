@@ -6,7 +6,7 @@ import com.apple.mrj.MRJQuitHandler;
 import java.lang.reflect.Method;
 
 /**
- * This class is a hack to get some native Mac app support.
+ * This class is a hack to get some native Mac app support but still be compilable on other platforms.
  * 
  * @author daniel.frisk@mojang.com
  */

@@ -9,10 +9,9 @@ import java.awt.Insets;
  */
 class GridBagConstraintsHelper {
 
-    private GridBagConstraints gbc;
+    private GridBagConstraints gbc = new GridBagConstraints();
 
     private GridBagConstraintsHelper() {
-        this.gbc = new GridBagConstraints();
     }
 
     static GridBagConstraintsHelper gbc() {
