@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MongoMatrix" default="default" basedir=".">
+    <!-- Import NB ant file -->
+    <import file="nbproject/build-impl.xml"/>
+
+    <!-- one-jar taskdef -->
+    <property name="one-jar.ant.jar" value="./lib/one-jar-ant-task-0.97.jar"/>
+    <taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" classpath="${one-jar.ant.jar}" onerror="report"/>
+
+    <!-- Build a single distribution jar -->
+    <target name="create-dist-pack">
+        <one-jar compress="true" destfile="${dist.dir}/packed/mongo-matrix.jar" manifest="manifest.mf">
+            <mainjars>
+                <fileset file="${dist.dir}/MongoMatrix.jar" />                
+            </mainjars>
+            <lib>
+                <fileset file="${dist.dir}/lib/**.jar" />
+            </lib>
+        </one-jar>
+    </target>
+
+    <!-- Trigger dist jar build -->
+    <target name="-post-jar" depends="create-dist-pack"/>
+</project>
