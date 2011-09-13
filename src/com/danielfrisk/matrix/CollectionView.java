@@ -7,6 +7,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.DBRef;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,9 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 /**
+ * TODO:
+ *    Add document
+ *    Delete document
  *
  * @author daniel.frisk@mojang.com
  */
@@ -50,8 +54,11 @@ class CollectionView extends JPanel {
     }
 
     /**
-     * TODO: Support these types: DBRef, BasicDBList, 
-     * Done: String, ObjectId
+     * TODO:
+     *   Support DBRef, BasicDBList properly (click ref browse there?)
+     *   Learn how to do a proper list...
+     *   Custom CellRenderer for references (and lists)?
+     *   Clean up and refactor this happy hack
      */
     class CollectionModel extends AbstractTableModel {
 
@@ -106,7 +113,13 @@ class CollectionView extends JPanel {
             DBObject obj = data.get(rowIndex);
             if (obj.containsField(fieldName)) {
                 Object field = obj.get(fieldName);
-                return field.toString();
+                if (field instanceof BasicDBList) {
+                    return "<BasicDBList>";
+                } else if (field instanceof DBRef) {
+                    return "<DBRef>";
+                } else {
+                    return field.toString();
+                }
             } else {
                 return "<n/a>";
             }
@@ -118,7 +131,7 @@ class CollectionView extends JPanel {
             String fieldName = columnNames.get(col);
             if (d.containsField(fieldName)) {
                 Object f = d.get(fieldName);
-                return f instanceof String || f instanceof Integer || f instanceof BasicDBList;
+                return f instanceof String || f instanceof Integer;
             }
             return false;
         }
@@ -127,12 +140,19 @@ class CollectionView extends JPanel {
         public void setValueAt(Object value, int row, int col) {
             DBCollection collection = app.getDb().getCollection(app.getSelectedCollection());
 
-            // Refresh the dbo before setting the value
             DBObject dbo = collection.findOne(data.get(row));
             data.set(row, dbo);
 
-            // Set value from view
-            dbo.put(columnNames.get(col), value);
+            String key = columnNames.get(col);
+            Object oldValue = dbo.get(key);
+            Object newValue;
+            if (oldValue instanceof Integer) {
+                newValue = Integer.parseInt(value.toString());
+            } else {
+                newValue = value;
+            }
+
+            dbo.put(key, newValue);
 
             // Save to db
             collection.save(dbo);
@@ -146,10 +166,10 @@ class CollectionView extends JPanel {
                 String field = columnNames.get(column);
 
                 @Override
+                @SuppressWarnings("unchecked")
                 public int compare(DBObject a, DBObject b) {
-                    Object av = a.get(field);
-                    Object bv = b.get(field);
-                    return r * av.toString().compareTo(bv.toString());
+                    Comparable av = (Comparable) a.get(field);
+                    return r * av.compareTo(b.get(field));
                 }
             });
             fireTableDataChanged();
